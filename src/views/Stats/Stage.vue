@@ -48,7 +48,7 @@
             {{ strings.translate(zone, "zoneName") }}
           </h2>
           <h1 class="title pt-1 no-wrap--text">
-            {{ $t('stats.title', {stage: strings.translate(stage, "code")}) }}
+            {{ $t('stats.title', {stage: strings.translate(stage, "code")}) }} (Sanity Cost: {{ stageCost }} / Sanity ratio {{ sanityRatio }})
           </h1>
           <v-spacer />
           <v-btn
@@ -84,12 +84,13 @@
 </template>
 
 <script>
-  import StageSelector from "@/components/stats/StageSelector";
-  import DataTable from "@/components/stats/DataTable";
-  import get from "@/utils/getters";
-  import DataSourceToggle from "@/components/stats/DataSourceToggle";
-  import strings from "@/utils/strings";
-  import existUtils from "@/utils/existUtils";
+import StageSelector from "@/components/stats/StageSelector";
+import DataTable from "@/components/stats/DataTable";
+import get from "@/utils/getters";
+import DataSourceToggle from "@/components/stats/DataSourceToggle";
+import strings from "@/utils/strings";
+import existUtils from "@/utils/existUtils";
+import stageUtils from "@/views/Stats/stageUtils";
 
 export default {
   name: "StatsByStage",
@@ -133,6 +134,13 @@ export default {
     },
     validStage () {
       return !this.zone.isOutdated && this.stage["dropInfos"] && existUtils.existence(this.stage, true)
+    },
+    stageCost() {
+      if (!this.stage) return 0;
+      return this.stage.apCost;
+    },
+    sanityRatio() {
+      return stageUtils.getSanityValue(this.selected.stage);
     }
   },
   methods: {

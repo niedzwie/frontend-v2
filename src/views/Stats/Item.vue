@@ -125,7 +125,7 @@
                 disable-link
               />
               <h1 class="title pl-2 pt-1 no-wrap--text">
-                {{ $t('result.title', {item: selectedItemName}) }}
+                {{ $t('result.title', {item: selectedItemName}) }} (Item value: {{ itemSanity }} --> {{ recommendation }})
               </h1>
               <v-spacer />
               <DataSourceToggle />
@@ -156,6 +156,9 @@ import ItemSelector from "@/components/stats/ItemSelector";
 import BackButton from "@/components/stats/BackButton";
 import CDN from "@/mixins/CDN";
 import Theme from "@/mixins/Theme";
+import recipieDatabase from "@/views/Stats/recipieDatabase";
+import itemUtils from "@/views/Stats/itemUtils";
+import stageUtils from "@/views/Stats/stageUtils";
 
 export default {
   name: "StatsByItem",
@@ -186,7 +189,14 @@ export default {
     },
     itemStagesStats() {
       if (!this.selectedItem) return [];
-      return get.statistics.byItemId(this.selectedItem.itemId);
+      let stageStats = get.statistics.byItemId(this.selectedItem.itemId);
+      stageStats = stageStats.map(stageStats => {
+        const stageSanityValue = stageUtils.getSanityValue(stageStats.stageId);
+        stageStats.stageSanityValue = stageSanityValue;
+        stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.percentage, 0.5)).toFixed(3);
+        return stageStats;
+      })
+      return stageStats;
     },
     selectedItemName() {
       if (!this.selectedItem) return "";
@@ -195,6 +205,30 @@ export default {
     relatedItems() {
       if (!this.selectedItem) return [];
       return get.items.byGroupId(this.selectedItem.groupID)
+    },
+    itemSanity() {
+      if (!this.selectedItem) return "";
+      const sanityValue = recipieDatabase.getSanityValue(this.selectedItem.itemId);
+      if (sanityValue) {
+        if (typeof sanityValue === 'number') {
+          return sanityValue.toFixed(2);
+        } else {
+          return sanityValue
+        }
+      } else return 0;
+    },
+    lowestFarmingSanity() {
+      if(!this.selectedItem) return "";
+      return itemUtils.getLowestSanityPerItem(this.selectedItem.itemId);
+    },
+    recommendation() {
+      if(!this.itemSanity || !this.lowestFarmingSanity) return "Farm";
+
+      if(Number(this.itemSanity) < Number(this.lowestFarmingSanity)) {
+        return "Fabricate";
+      } else {
+        return "Farm";
+      }
     }
   },
   watch: {

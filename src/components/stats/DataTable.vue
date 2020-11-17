@@ -309,6 +309,20 @@
             {{ props.item.times }}
           </td>
           <td
+            v-if="type === 'item'"
+            :class="tableCellClasses"
+            class="light-blue--text"
+          >
+            {{ props.item.stageSanityValue }}
+          </td>
+          <td
+            v-if="type === 'item'"
+            :class="tableCellClasses"
+            class="light-green--text"
+          >
+            {{ props.item.suggestion }}
+          </td>
+          <td
             class="d-flex align-center justify-start fill-height"
             :class="tableCellClasses"
           >
@@ -518,6 +532,19 @@
             align: "left",
             sortable: true,
             width: "110px"
+          });
+          headers.splice(3, 0, {
+            text: "Stage Sanity Value",
+            value: "stageSanityValue",
+            align: "left",
+            sortable: true,
+            width: "70px"
+          },{
+            text: "Suggestion",
+            value: "suggestion",
+            align: "left",
+            sortable: true,
+            width: "70px"
           })
         }
 
