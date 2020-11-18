@@ -28,7 +28,7 @@ export default {
                     itemRegister[item.itemId] = item;
                     return itemRegister;
                     // return agg + value;
-                });
+                }, {});
 
             this.getSanityValue.cache[stageId] = (stageStats
                 .map(item => {

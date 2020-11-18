@@ -46,6 +46,20 @@ function calculatePurpleItem(itemOffset, ...craftingMatsOffsets) {
     }
 }
 
+function calculateBattleRecord(offset, factor) {
+    return () => {
+        const lowestSanityCurrent = Number(itemUtils.getLowestSanityPerItem(2000 + offset));
+        const lowestSanityPrevious = offset <= 0 ? 0 : Number(itemUtils.getLowestSanityPerItem(2000 + offset - 1));
+        const craftingSanity = lowestSanityPrevious * factor;
+        if (craftingSanity > 0) {
+            return Math.min(lowestSanityCurrent, craftingSanity);
+        } else {
+            return lowestSanityCurrent;
+        }
+
+    }
+}
+
 const lowestCraftingValueDatabase = {
     // Orirock Cube
     30012: calculateGreenItem(orirockOffset),
@@ -95,6 +109,9 @@ const lowestCraftingValueDatabase = {
     31014: calculatePurpleItem(gelOffset, orironOffset, gelOffset, alloyOffset),
     // Incandescent Alloy Black
     31024: calculatePurpleItem(alloyOffset, deviceOffset, grindstoneOffset, alloyOffset),
+    2002: calculateBattleRecord(2, 2),
+    2003: calculateBattleRecord(3, 2.5),
+    2004: calculateBattleRecord(4, 2)
 }
 
 export default {

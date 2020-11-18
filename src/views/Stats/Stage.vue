@@ -140,6 +140,7 @@ export default {
       return this.stage.apCost;
     },
     sanityRatio() {
+      if(!this.selected.stage) return 0;
       return stageUtils.getSanityValue(this.selected.stage);
     }
   },

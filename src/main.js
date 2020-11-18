@@ -14,6 +14,7 @@ import '@/components/functional'
 import environment from "@/utils/environment";
 
 import './injections'
+import initUtils from "@/utils/initUtils";
 
 if (!window.Intl) require("intl-collator")
 
@@ -21,6 +22,8 @@ Vue.config.productionTip = false
 
 Vue.config.performance = environment.debug.performance
 Vue.config.devtools = environment.debug.devtools
+
+initUtils.initData();
 
 new Vue({
   vuetify,
