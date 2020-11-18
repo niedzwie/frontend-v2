@@ -1,6 +1,10 @@
 import store from '@/store'
 import formatter from "@/utils/timeFormatter";
 import existUtils from "@/utils/existUtils";
+import GreenItem from "@/utils/recipies/GreenItem";
+import BlueItem from "@/utils/recipies/BlueItem";
+import Purpletem from "@/utils/recipies/Purpletem";
+import BattleRecord from "@/utils/recipies/BattleRecord";
 // import Console from "@/utils/Console";
 
 const Getters = {};
@@ -39,6 +43,43 @@ Getters.items = {
     const got = this.all(...options);
     if (!got) return [];
     return got.filter(el => el.groupID === groupId) || []
+  },
+  lowestStageSanityByItemId(itemId) {
+    if (typeof this.lowestStageSanityByItemId.cache === "undefined") {
+      this.lowestStageSanityByItemId.cache = {};
+    }
+
+    if (!this.lowestStageSanityByItemId.cache[itemId]) {
+      const item = Getters.statistics.byItemId(`${itemId}`);
+      this.lowestStageSanityByItemId.cache[itemId] = item
+          .filter(el => el.stage.stageType !== "ACTIVITY")
+          .map(stage => stage.apPPR)
+          .filter(sanityPerItem => sanityPerItem !== "Infinity")
+          .reduce((previousSanityPerItem, currentSanityPerItem) => {
+            if (previousSanityPerItem) {
+              if (Number(previousSanityPerItem) < Number(currentSanityPerItem)) {
+                return previousSanityPerItem;
+              } else {
+                return currentSanityPerItem;
+              }
+            } else {
+              return currentSanityPerItem;
+            }
+          }, null);
+    }
+    return Number(this.lowestStageSanityByItemId.cache[itemId]);
+  },
+  lowestSanityByItemId(itemId) {
+    const greenItem = GreenItem.getSanityFor(itemId);
+    const blueItem = BlueItem.getSanityFor(itemId);
+    const purpleItem = Purpletem.getSanityFor(itemId);
+    const battleRecord = BattleRecord.getSanityFor(itemId);
+    const otherItem = this.lowestStageSanityByItemId(itemId);
+    return greenItem ??
+        blueItem ??
+        purpleItem ??
+        battleRecord ??
+        otherItem;
   }
 }
 

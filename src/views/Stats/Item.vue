@@ -156,8 +156,6 @@ import ItemSelector from "@/components/stats/ItemSelector";
 import BackButton from "@/components/stats/BackButton";
 import CDN from "@/mixins/CDN";
 import Theme from "@/mixins/Theme";
-import recipieDatabase from "@/views/Stats/recipieDatabase";
-import itemUtils from "@/views/Stats/itemUtils";
 import stageUtils from "@/views/Stats/stageUtils";
 
 export default {
@@ -208,7 +206,7 @@ export default {
     },
     itemSanity() {
       if (!this.selectedItem) return "";
-      const sanityValue = recipieDatabase.getSanityValue(this.selectedItem.itemId);
+      const sanityValue = get.items.lowestSanityByItemId(this.selectedItem.itemId);
       if (sanityValue) {
         if (typeof sanityValue === 'number') {
           return sanityValue.toFixed(2);
@@ -219,7 +217,7 @@ export default {
     },
     lowestFarmingSanity() {
       if(!this.selectedItem) return "";
-      return itemUtils.getLowestSanityPerItem(this.selectedItem.itemId);
+      return get.items.lowestStageSanityByItemId(this.selectedItem.itemId);
     },
     recommendation() {
       if(!this.itemSanity || !this.lowestFarmingSanity) return "Farm";

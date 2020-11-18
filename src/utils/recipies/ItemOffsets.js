@@ -1,0 +1,12 @@
+export const orirockOffset = 10;
+export const sugarOffset = 20;
+export const polyesterOffset = 30;
+export const orironOffset = 40;
+export const ketonOffset = 50;
+export const deviceOffset = 60;
+export const kohlOffset = 70;
+export const manganeseOffset = 80;
+export const grindstoneOffset = 90;
+export const rmaOffset = 100;
+export const gelOffset = 1010;
+export const alloyOffset = 1020;

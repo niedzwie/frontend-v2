@@ -1,5 +1,4 @@
 import get from "@/utils/getters";
-import recipieDatabase from "@/views/Stats/recipieDatabase";
 
 export default {
     getSanityValue(stageId) {
@@ -19,7 +18,7 @@ export default {
                     const itemId = x.item.itemId;
                     return {
                         itemId,
-                        sanityValue: recipieDatabase.getSanityValue(itemId)
+                        sanityValue: get.items.lowestSanityByItemId(itemId)
                     }
                     // const lowestSanity = 0;//recipieDatabase.getSanityValue(x.item.itemId);
                     // return Number(lowestSanity) * x.item.percentage
