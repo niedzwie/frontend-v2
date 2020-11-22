@@ -21,13 +21,17 @@ class BlueItem {
 
     getSanityValue() {
         const lowestFarmingSanity = Number(get.items.lowestStageSanityByItemId(30003 + this.itemOffset));
-        const craftingSanity = GreenItem.getSanityFor(30002 + this.itemOffset) * this.multiplier;
+        const craftingSanity = this.getCraftingSanity();
 
         if (craftingSanity > 0) {
             return Math.min(lowestFarmingSanity, craftingSanity);
         } else {
             return lowestFarmingSanity;
         }
+    }
+
+    getCraftingSanity() {
+        return GreenItem.getSanityFor(30002 + this.itemOffset) * this.multiplier;
     }
 }
 
@@ -63,6 +67,14 @@ export default {
         const itemRecipe = itemsDb[itemId];
         if (itemRecipe) {
             return itemRecipe.getSanityValue();
+        } else {
+            return null;
+        }
+    },
+    getCraftingSanityFor(itemId) {
+        const itemRecipe = itemsDb[itemId];
+        if (itemRecipe) {
+            return itemRecipe.getCraftingSanity();
         } else {
             return null;
         }

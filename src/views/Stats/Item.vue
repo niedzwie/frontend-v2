@@ -125,8 +125,38 @@
                 disable-link
               />
               <h1 class="title pl-2 pt-1 no-wrap--text">
-                {{ $t('result.title', {item: selectedItemName}) }} (Item value: {{ lowestItemSanity }} -->
-                {{ recommendation }})
+                {{ $t('result.title', {item: selectedItemName}) }}
+                <v-chip
+                  class="ma-2"
+                  color="blue"
+                  text-color="white"
+                  label
+                >
+                  Item value:
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <span :class="{underline: !shouldCraft}">{{ lowestFarmingSanity }}</span><v-icon>mdi-silverware-fork</v-icon>
+                      </span>
+                    </template>
+                    <span>Lowest farming sanity</span>
+                  </v-tooltip>
+                  /
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                      <span
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <span :class="{underline: shouldCraft}">{{ craftingSanity }}</span><v-icon>mdi-hammer</v-icon>
+                      </span>
+                    </template>
+                    <span>Lowest crafting sanity</span>
+                  </v-tooltip>
+                </v-chip>
               </h1>
               <v-spacer />
               <DataSourceToggle />
@@ -224,15 +254,14 @@ export default {
       if(!this.selectedItem) return "";
       return get.items.lowestStageSanityByItemId(this.selectedItem.itemId);
     },
-    recommendation() {
-      if(!this.lowestItemSanity || !this.lowestFarmingSanity) return "Farm";
-
-      if(Number(this.lowestItemSanity) < Number(this.lowestFarmingSanity)) {
-        return "Fabricate";
-      } else {
-        return "Farm";
-      }
-    }
+    craftingSanity() {
+      if(!this.selectedItem) return "";
+      return get.items.craftingSanityByItemId(this.selectedItem.itemId);
+    },
+    shouldCraft() {
+      if (!this.lowestItemSanity || !this.lowestFarmingSanity) return true;
+      return Number(this.lowestItemSanity) < Number(this.lowestFarmingSanity);
+    },
   },
   watch: {
     $route: function(to, from) {
@@ -317,5 +346,8 @@ export default {
 }
 .full-width {
   width: 100%;
+}
+.underline {
+  text-decoration: underline;
 }
 </style>

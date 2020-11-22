@@ -13,12 +13,16 @@ class BattleRecord {
         const lowestSanityCurrent = Number(get.items.lowestStageSanityByItemId(itemId));
 
         if (itemId > this.baseValue + 1) {
-            const craftingSanity = itemsDb[this.calculateItemId() - 1].getSanityValue() * this.multiplier;
+            const craftingSanity = this.getCraftingSanity();
             return Math.min(lowestSanityCurrent, craftingSanity);
         } else {
             return lowestSanityCurrent;
         }
 
+    }
+
+    getCraftingSanity() {
+        return itemsDb[this.calculateItemId() - 1].getSanityValue() * this.multiplier;
     }
 
     calculateItemId() {
@@ -38,6 +42,14 @@ export default {
         const itemRecipe = itemsDb[itemId];
         if (itemRecipe) {
             return itemRecipe.getSanityValue();
+        } else {
+            return null;
+        }
+    },
+    getCraftingSanityFor(itemId) {
+        const itemRecipe = itemsDb[itemId];
+        if (itemRecipe) {
+            return itemRecipe.getCraftingSanity();
         } else {
             return null;
         }

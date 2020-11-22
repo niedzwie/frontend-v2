@@ -10,7 +10,7 @@ import {
 import BlueItem from "@/utils/recipies/BlueItem";
 import get from "@/utils/getters";
 
- class PurpleItem {
+class PurpleItem {
     constructor(itemOffset, ...craftingMatsOffsets) {
         this.itemOffset = itemOffset;
         this.craftingMatsOffsets = craftingMatsOffsets;
@@ -18,10 +18,14 @@ import get from "@/utils/getters";
 
     getSanityValue() {
         const lowestFarmingSanity = Number(get.items.lowestStageSanityByItemId(30004 + this.itemOffset));
-        const craftingSanity = this.craftingMatsOffsets
+        const craftingSanity = this.getCraftingSanity();
+        return Math.min(lowestFarmingSanity, craftingSanity);
+    }
+
+    getCraftingSanity() {
+        return this.craftingMatsOffsets
             .map(craftingMatOffset => BlueItem.getSanityFor(30003 + craftingMatOffset))
             .reduce((agg, sanity) => agg + sanity, 0)
-        return Math.min(lowestFarmingSanity, craftingSanity);
     }
 }
 
@@ -57,6 +61,14 @@ export default {
         const itemRecipe = itemsDb[itemId];
         if (itemRecipe) {
             return itemRecipe.getSanityValue();
+        } else {
+            return null;
+        }
+    },
+    getCraftingSanityFor(itemId) {
+        const itemRecipe = itemsDb[itemId];
+        if (itemRecipe) {
+            return itemRecipe.getCraftingSanity();
         } else {
             return null;
         }

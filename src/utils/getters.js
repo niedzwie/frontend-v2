@@ -81,6 +81,16 @@ Getters.items = {
         purpleItem ??
         battleRecord ??
         otherItem;
+  },
+  craftingSanityByItemId(itemId) {
+    const greenItem = GreenItem.getCraftingSanityFor(itemId);
+    const blueItem = BlueItem.getCraftingSanityFor(itemId);
+    const purpleItem = Purpletem.getCraftingSanityFor(itemId);
+    const battleRecord = BattleRecord.getCraftingSanityFor(itemId);
+    return greenItem ??
+        blueItem ??
+        purpleItem ??
+        battleRecord;
   }
 }
 
