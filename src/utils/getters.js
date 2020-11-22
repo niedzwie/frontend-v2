@@ -5,6 +5,7 @@ import GreenItem from "@/utils/recipies/GreenItem";
 import BlueItem from "@/utils/recipies/BlueItem";
 import Purpletem from "@/utils/recipies/Purpletem";
 import BattleRecord from "@/utils/recipies/BattleRecord";
+import filterUtils from "@/utils/filterUtils";
 // import Console from "@/utils/Console";
 
 const Getters = {};
@@ -52,7 +53,7 @@ Getters.items = {
     if (!this.lowestStageSanityByItemId.cache[itemId]) {
       const item = Getters.statistics.byItemId(`${itemId}`);
       this.lowestStageSanityByItemId.cache[itemId] = item
-          .filter(el => el.stage.stageType !== "ACTIVITY")
+          .filter(el =>  filterUtils.isRelevantStage(el.stage))
           .map(stage => stage.apPPR)
           .filter(sanityPerItem => sanityPerItem !== "Infinity")
           .reduce((previousSanityPerItem, currentSanityPerItem) => {
@@ -153,6 +154,31 @@ Getters.stages = {
       return el.zoneId === zoneId
     }) || {}
   },
+  sanityValueById(stageId) {
+    if (typeof this.sanityValueById.cache === "undefined") {
+      this.sanityValueById.cache = {};
+    }
+
+    if (!this.sanityValueById.cache[stageId]) {
+      const stageStats = Getters.statistics.byStageId(stageId);
+      const stageCost = Getters.stages.byStageId(stageId).apCost;
+      const sanityValue = stageStats
+          .filter(x => {
+            return filterUtils.isRelevantItem(x.item);
+          })
+          .map(x => {
+            const itemId = x.item.itemId;
+            const lowestSanity = Getters.items.lowestSanityByItemId(itemId);
+            return lowestSanity * x.percentage
+          })
+          .reduce((agg, value) => {
+            return agg + value;
+          }, 0);
+      this.sanityValueById.cache[stageId] = (sanityValue / stageCost).toFixed(2);
+    }
+
+    return this.sanityValueById.cache[stageId];
+  }
 }
 
 Getters.zones = {

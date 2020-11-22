@@ -90,7 +90,6 @@ import get from "@/utils/getters";
 import DataSourceToggle from "@/components/stats/DataSourceToggle";
 import strings from "@/utils/strings";
 import existUtils from "@/utils/existUtils";
-import stageUtils from "@/views/Stats/stageUtils";
 
 export default {
   name: "StatsByStage",
@@ -141,7 +140,7 @@ export default {
     },
     sanityRatio() {
       if(!this.selected.stage) return 0;
-      return stageUtils.getSanityValue(this.selected.stage);
+      return get.stages.sanityValueById(this.selected.stage);
     }
   },
   methods: {

@@ -1,5 +1,4 @@
 import get from "@/utils/getters";
-import stageUtils from "@/views/Stats/stageUtils";
 
 export default {
     initData() {
@@ -8,7 +7,7 @@ export default {
         });
 
         get.stages.all().forEach(stage => {
-            stageUtils.getSanityValue(stage.stageId);
+            get.stages.sanityValueById(stage.stageId);
         });
     }
 }

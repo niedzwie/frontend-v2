@@ -125,7 +125,8 @@
                 disable-link
               />
               <h1 class="title pl-2 pt-1 no-wrap--text">
-                {{ $t('result.title', {item: selectedItemName}) }} (Item value: {{ itemSanity }} --> {{ recommendation }})
+                {{ $t('result.title', {item: selectedItemName}) }} (Item value: {{ lowestItemSanity }} -->
+                {{ recommendation }})
               </h1>
               <v-spacer />
               <DataSourceToggle />
@@ -156,7 +157,6 @@ import ItemSelector from "@/components/stats/ItemSelector";
 import BackButton from "@/components/stats/BackButton";
 import CDN from "@/mixins/CDN";
 import Theme from "@/mixins/Theme";
-import stageUtils from "@/views/Stats/stageUtils";
 
 export default {
   name: "StatsByItem",
@@ -189,7 +189,7 @@ export default {
       if (!this.selectedItem) return [];
       let stageStats = get.statistics.byItemId(this.selectedItem.itemId);
       stageStats = stageStats.map(stageStats => {
-        const stageSanityValue = stageUtils.getSanityValue(stageStats.stageId);
+        const stageSanityValue = get.stages.sanityValueById(stageStats.stageId);
         stageStats.stageSanityValue = stageSanityValue;
         stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.percentage, 0.5)).toFixed(3);
         return stageStats;
@@ -204,7 +204,7 @@ export default {
       if (!this.selectedItem) return [];
       return get.items.byGroupId(this.selectedItem.groupID)
     },
-    itemSanity() {
+    lowestItemSanity() {
       if (!this.selectedItem) return "";
       const sanityValue = get.items.lowestSanityByItemId(this.selectedItem.itemId);
       if (sanityValue) {
@@ -220,9 +220,9 @@ export default {
       return get.items.lowestStageSanityByItemId(this.selectedItem.itemId);
     },
     recommendation() {
-      if(!this.itemSanity || !this.lowestFarmingSanity) return "Farm";
+      if(!this.lowestItemSanity || !this.lowestFarmingSanity) return "Farm";
 
-      if(Number(this.itemSanity) < Number(this.lowestFarmingSanity)) {
+      if(Number(this.lowestItemSanity) < Number(this.lowestFarmingSanity)) {
         return "Fabricate";
       } else {
         return "Farm";

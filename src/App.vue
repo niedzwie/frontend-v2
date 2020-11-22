@@ -191,6 +191,7 @@ export default {
   },
   methods: {
     async refreshData () {
+      //TODO: Berechnung der Werte einbauen
       await this.$store.dispatch("data/fetch", true);
     },
   },
