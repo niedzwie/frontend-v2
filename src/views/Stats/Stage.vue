@@ -48,7 +48,37 @@
             {{ strings.translate(zone, "zoneName") }}
           </h2>
           <h1 class="title pt-1 no-wrap--text">
-            {{ $t('stats.title', {stage: strings.translate(stage, "code")}) }} (Sanity Cost: {{ stageCost }} / Sanity ratio {{ sanityRatio }})
+            {{ $t('stats.title', {stage: strings.translate(stage, "code")}) }}
+            <v-chip
+              class="ma-2"
+              color="#968D2C"
+              text-color="white"
+              label
+            >
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    {{ stageCost }}<v-icon>mdi-brain</v-icon>
+                  </span>
+                </template>
+                <span>Sanity cost</span>
+              </v-tooltip>
+              /
+              <v-tooltip top>
+                <template v-slot:activator="{ on, attrs }">
+                  <span
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    {{ sanityRatio }}<v-icon small>mdi-thumb-up</v-icon>
+                  </span>
+                </template>
+                <span>Sanity ratio</span>
+              </v-tooltip>
+            </v-chip>
           </h1>
           <v-spacer />
           <v-btn
