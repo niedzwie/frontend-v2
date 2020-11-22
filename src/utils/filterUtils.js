@@ -2,7 +2,7 @@
 const goldId = "3003";
 const carbonStickId = "3112";
 const carbonBrickId = "3113";
-const purpleCarbonBrickId = "3114"
+const carbonPackId = "3114"
 
 export default {
     isRelevantStage(stageStats) {
@@ -21,6 +21,6 @@ export default {
         // return isRelevant
     },
     isRelevantItem(item) {
-        return item.itemType !== "ACTIVITY_ITEM" && item.itemType !== "FURN" && ![goldId, carbonStickId, carbonBrickId, purpleCarbonBrickId].includes(item.itemId)
+        return item.itemType !== "ACTIVITY_ITEM" && item.itemType !== "FURN" && ![goldId, carbonStickId, carbonBrickId, carbonPackId].includes(item.itemId)
     }
 }

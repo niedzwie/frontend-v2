@@ -200,7 +200,7 @@
       :footer-props="options.footer"
 
       must-sort
-      sort-by="percentage"
+      sort-by="suggestion"
       :sort-desc="true"
       :locale="$i18n.locale"
       :hide-default-footer="items.length <= 10"
@@ -321,6 +321,13 @@
             class="light-green--text"
           >
             {{ props.item.suggestion }}
+          </td>
+          <td
+              v-if="type === 'item'"
+              :class="tableCellClasses"
+              class="light-blue--text"
+          >
+            {{ props.item.farmSpeed }}
           </td>
           <td
             class="d-flex align-center justify-start fill-height"
@@ -450,7 +457,7 @@
       return {
         options: {
           table: {
-            itemsPerPage: 10
+            itemsPerPage: -1
           },
           footer: {
             itemsPerPageOptions: [10, 20, 40, -1],
@@ -542,6 +549,12 @@
           },{
             text: "Suggestion",
             value: "suggestion",
+            align: "left",
+            sortable: true,
+            width: "70px"
+          },{
+            text: "Items/hr",
+            value: "farmSpeed",
             align: "left",
             sortable: true,
             width: "70px"

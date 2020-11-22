@@ -163,13 +163,13 @@ Getters.stages = {
       const stageStats = Getters.statistics.byStageId(stageId);
       const stageCost = Getters.stages.byStageId(stageId).apCost;
       const sanityValue = stageStats
-          .filter(x => {
-            return filterUtils.isRelevantItem(x.item);
+          .filter(stageStat => {
+            return filterUtils.isRelevantItem(stageStat.item);
           })
-          .map(x => {
-            const itemId = x.item.itemId;
+          .map(stageStat => {
+            const itemId = stageStat.item.itemId;
             const lowestSanity = Getters.items.lowestSanityByItemId(itemId);
-            return lowestSanity * x.percentage
+            return lowestSanity * stageStat.percentage
           })
           .reduce((agg, value) => {
             return agg + value;

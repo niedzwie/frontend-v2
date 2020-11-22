@@ -191,7 +191,12 @@ export default {
       stageStats = stageStats.map(stageStats => {
         const stageSanityValue = get.stages.sanityValueById(stageStats.stageId);
         stageStats.stageSanityValue = stageSanityValue;
-        stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.percentage, 0.5)).toFixed(3);
+        if (stageStats.stage.minClearTime){
+          stageStats.farmSpeed = (stageStats.percentage * 3600000 / stageStats.stage.minClearTime).toFixed(1);
+        } else {
+          stageStats.farmSpeed = "--";
+        }
+        stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.farmSpeed, 0.5)).toFixed(2);
         return stageStats;
       })
       return stageStats;
