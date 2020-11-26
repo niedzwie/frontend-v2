@@ -226,7 +226,11 @@ export default {
         } else {
           stageStats.farmSpeed = "--";
         }
-        stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.farmSpeed, 0.5)).toFixed(2);
+        if (stageStats.zone.zoneId === "gachabox"){
+          stageStats.suggestion = 0;
+        } else {
+          stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.farmSpeed, 0.5)).toFixed(2);
+        }
         return stageStats;
       })
       return stageStats;
@@ -256,7 +260,7 @@ export default {
     },
     craftingSanity() {
       if(!this.selectedItem) return "";
-      return get.items.craftingSanityByItemId(this.selectedItem.itemId);
+      return get.items.craftingSanityByItemId(this.selectedItem.itemId).toFixed(2);
     },
     shouldCraft() {
       if (!this.lowestItemSanity || !this.lowestFarmingSanity) return true;

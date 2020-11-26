@@ -323,9 +323,9 @@
             {{ props.item.suggestion }}
           </td>
           <td
-              v-if="type === 'item'"
-              :class="tableCellClasses"
-              class="light-blue--text"
+            v-if="type === 'item'"
+            :class="tableCellClasses"
+            class="light-blue--text"
           >
             {{ props.item.farmSpeed }}
           </td>
