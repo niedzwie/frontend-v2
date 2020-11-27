@@ -229,7 +229,7 @@ export default {
         if (stageStats.zone.zoneId === "gachabox"){
           stageStats.suggestion = 0;
         } else {
-          stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.farmSpeed, 0.5)).toFixed(2);
+          stageStats.suggestion = (Number(stageSanityValue) * Math.pow(stageStats.farmSpeed / stageStats.apPPR, 0.5) * 12).toFixed(2);
         }
         return stageStats;
       })
