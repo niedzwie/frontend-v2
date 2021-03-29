@@ -237,9 +237,6 @@ export default {
         return stageStats;
       })
       return stageStats;
-    itemStagesStats () {
-      if (!this.selectedItem) return []
-      return get.statistics.byItemId(this.selectedItem.itemId)
     },
     selectedItemName () {
       if (!this.selectedItem) return ''
