@@ -76,8 +76,10 @@
       justify="center"
     >
       <v-btn
+        v-haptic
         href="https://github.com/penguin-statistics/frontend-v2"
         target="_blank"
+        rel="noopener"
         :class="{
           'mx-2': $vuetify.breakpoint.smAndUp,
           'mx-1': $vuetify.breakpoint.xsOnly
@@ -93,8 +95,10 @@
       <v-divider vertical />
 
       <v-btn
+        v-haptic
         href="https://github.com/penguin-statistics/backend"
         target="_blank"
+        rel="noopener"
         :class="{
           'mx-2': $vuetify.breakpoint.smAndUp,
           'mx-1': $vuetify.breakpoint.xsOnly
@@ -127,6 +131,7 @@
           small
           href="https://discord.gg/uEXJcue"
           target="_blank"
+          rel="noopener"
         >
           <v-icon
             left
@@ -145,6 +150,13 @@
         :key="key"
         class="subtitle-2"
       >
+        <v-icon
+          v-if="skill === 'mobile'"
+          small
+          style="margin-top: -2px"
+        >
+          mdi-alert-decagram
+        </v-icon>
         {{ $t(`contribute.skills.${skill}`) }}
       </li>
     </ul>
@@ -164,6 +176,7 @@
           hover
           :href="link.url"
           target="_blank"
+          rel="noopener"
         >
           <template v-slot:backdrop>
             <v-icon>
@@ -197,18 +210,19 @@
 </template>
 
 <script>
-import BackdropCard from "@/components/global/BackdropCard";
+import BackdropCard from '@/components/global/BackdropCard'
 
 export default {
   name: 'Contribute',
   components: {
     BackdropCard
   },
-  data() {
+  data () {
     return {
       skills: [
         'frontend',
         'backend',
+        'mobile',
         'maintenance',
         'design',
         'analysis'
@@ -221,10 +235,10 @@ export default {
         //   external: true
         // },
         {
-          url: "https://developer.penguin-stats.io",
-          icon: "mdi-dev-to",
-          title: "link.docs.title",
-          subtitle: "link.docs.subtitle",
+          url: 'https://developer.penguin-stats.io',
+          icon: 'mdi-dev-to',
+          title: 'link.docs.title',
+          subtitle: 'link.docs.subtitle',
           external: true
         }
       ]

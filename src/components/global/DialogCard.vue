@@ -24,6 +24,7 @@
 
     <v-card-actions class="elevation-4">
       <v-btn
+        v-haptic
         text
         block
         large
@@ -40,19 +41,19 @@
 </template>
 
 <script>
-  export default {
-    name: "DialogCard",
-    props: {
-      title: {
-        type: String,
-        required: true,
-      },
-      subtitle: {
-        type: String,
-        required: true,
-      }
+export default {
+  name: 'DialogCard',
+  props: {
+    title: {
+      type: String,
+      required: true
+    },
+    subtitle: {
+      type: String,
+      required: true
     }
   }
+}
 </script>
 
 <style scoped>

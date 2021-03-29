@@ -33,61 +33,72 @@
         mdi-page-next
       </v-icon>
     </v-card-title>
+    <v-icon
+      v-if="favorited"
+      :color="dark ? 'yellow' : 'yellow darken-4'"
+      class="stage-card--star"
+      :size="10"
+    >
+      mdi-star
+    </v-icon>
   </v-card>
 </template>
 
 <script>
-  import StageCode from "@/components/stats/StageCode";
-  import Theme from "@/mixins/Theme";
-  import strings from "@/utils/strings";
+import StageCode from '@/components/stats/StageCode'
+import Theme from '@/mixins/Theme'
+import strings from '@/utils/strings'
 
-  export default {
-    name: "StageCard",
-    components: {StageCode},
-    mixins: [Theme],
-    props: {
-      stage: {
-        type: Object,
-        required: true
-      },
-      chosen: {
-        type: Boolean,
-        default () {
-          return null
-        }
-      },
-      dense: {
-        type: Boolean,
-        default () {
-          return false
-        }
-      },
-      transparent: {
-        type: Boolean,
-        default: () => false
-      },
-      left: {
-        type: Boolean,
-        default () {
-          return false
-        }
-      },
-      right: {
-        type: Boolean,
-        default () {
-          return false
-        }
+export default {
+  name: 'StageCard',
+  components: { StageCode },
+  mixins: [Theme],
+  props: {
+    stage: {
+      type: Object,
+      required: true
+    },
+    chosen: {
+      type: Boolean,
+      default () {
+        return null
       }
     },
-    computed: {
-      stateful() {
-        return this.chosen !== null;
-      },
-      translatedCode () {
-        return strings.translate(this.stage, "code")
+    dense: {
+      type: Boolean,
+      default () {
+        return false
       }
     },
+    transparent: {
+      type: Boolean,
+      default: () => false
+    },
+    left: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    },
+    right: {
+      type: Boolean,
+      default () {
+        return false
+      }
+    }
+  },
+  computed: {
+    stateful () {
+      return this.chosen !== null
+    },
+    translatedCode () {
+      return strings.translate(this.stage, 'code')
+    },
+    favorited () {
+      return this.$store.getters['stagePreferences/hasFavorite'](this.stage.stageId)
+    }
   }
+}
 </script>
 
 <style scoped>
@@ -156,5 +167,19 @@
 
   .stage-card--transparent {
     background: transparent !important;
+  }
+
+  .stage-card--stateless .stage-card--star {
+    transition: all .275s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  .stage-card--stateless:hover .stage-card--star {
+    transform: scale(1.2) rotate(10deg);
+  }
+  .stage-card--star {
+    position: absolute !important;
+    top: 0;
+    right: 0;
+    padding: 1px 3px;
+    text-shadow: 0 0 5px;
   }
 </style>

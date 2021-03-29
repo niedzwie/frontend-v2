@@ -75,30 +75,95 @@
 </i18n>
 
 <template>
-  <v-card 
-    elevation="5" 
+  <v-card
+    elevation="5"
     class="bkop-light pa-6"
   >
-    <template v-if="isCNMirror || isIOS">
-      <v-row
-        justify="center"
-        align="center"
-        class="fill-height"
-      >
-        <v-col cols="12">
-          <v-alert
-            icon="mdi-card-bulleted-off"
-            border="left"
-            color="text"
-            outlined
-            colored-border
-            elevation="2"
-            class="mb-0"
+    <template v-if="hide && (isCNMirror || isIOS)">
+      <div class="d-flex flex-column justify-center fill-height">
+        <h1 class="headline">
+          {{ $t('menu.about.donate') }}
+        </h1>
+        <!--          <v-alert-->
+        <!--            icon="mdi-card-bulleted-off"-->
+        <!--            border="left"-->
+        <!--            color="text"-->
+        <!--            outlined-->
+        <!--            colored-border-->
+        <!--            elevation="2"-->
+        <!--            class="mb-0"-->
+        <!--          >-->
+        <!--            {{ $t('donate.regulation.' + (isCNMirror ? 'cnMirror' : 'app')) }}-->
+        <!--          </v-alert>-->
+        <div class="flex-grow-1 px-2 d-flex flex-column align-start">
+          <del class="caption mt-3 mb-2">
+            {{ $t('donate.donate_0') }}
+          </del>
+
+          <div class="subtitle-1">
+            {{ $t('donate.donate_1') }}
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <span
+                  style="border-bottom:1px dashed #ccc;"
+                  v-bind="attrs"
+                  v-on="on"
+                >{{ $t('donate.donate_2') }}</span>
+              </template>
+              {{ $t('donate.donate_3') }}
+            </v-tooltip>
+            {{ $t('donate.donate_4') }}
+          </div>
+
+          <BackdropCard
+            darken
+            hover
+            :to="{ name: 'AboutDonate' }"
+            class="bkop-light px-12 py-6 my-6 elevation-3"
+            style="height: 192px; width: 100%"
           >
-            {{ $t('donate.regulation.' + (isCNMirror ? 'cnMirror' : 'app')) }}
-          </v-alert>
-        </v-col>
-      </v-row>
+            <template v-slot:backdrop>
+              <v-icon>
+                mdi-handshake
+              </v-icon>
+            </template>
+
+            <v-row
+              align="center"
+              justify="center"
+              class="d-flex flex-column fill-height"
+            >
+              <div class="text-center overline display-1 py-1">
+                check out how you can help us
+              </div>
+              <div class="text-center display-1 py-1">
+                查看如何支持我们
+              </div>
+            </v-row>
+          </BackdropCard>
+
+          <v-btn
+            v-haptic
+            color="blue-grey"
+            href="https://shimo.im/sheets/GJXgP9XQcPrj6rtg/2fC1m"
+            target="_blank"
+            rel="noopener"
+            large
+            class="align-self-center mt-4"
+          >
+            <v-icon left>
+              mdi-bank-transfer
+            </v-icon>
+            {{ $t('donate.accountBook') }}
+            <v-icon
+              right
+              small
+            >
+              mdi-open-in-new
+            </v-icon>
+          </v-btn>
+        </div>
+      </div>
     </template>
     <template v-else>
       <h1 class="headline">
@@ -124,9 +189,11 @@
           {{ $t('donate.donate_4') }}
         </div>
         <v-btn
+          v-haptic
           color="blue-grey"
           href="https://shimo.im/sheets/GJXgP9XQcPrj6rtg/2fC1m"
           target="_blank"
+          rel="noopener"
           class="mt-1"
         >
           <v-icon left>
@@ -212,12 +279,14 @@
             >
               <v-btn
                 v-if="$vuetify.breakpoint.xsOnly"
+                v-haptic
                 text
                 outlined
                 rounded
                 class="my-0"
                 :href="qr.alipay"
                 target="_blank"
+                rel="noopener"
               >
                 {{ $t('donate.redirectToApp', {app: $t('donate.methods.alipay')}) }}
               </v-btn>
@@ -267,11 +336,13 @@
         class="pt-5 pb-3"
       >
         <v-btn
+          v-haptic
           rounded
           large
           color="primary"
           :href="qr.paypal"
           target="_blank"
+          rel="noopener"
         >
           <v-icon left>
             mdi-paypal
@@ -283,24 +354,30 @@
 </template>
 
 <script>
-import Theme from "@/mixins/Theme";
-import BackdropCard from "@/components/global/BackdropCard";
-import Mirror from "@/mixins/Mirror";
+import Theme from '@/mixins/Theme'
+import BackdropCard from '@/components/global/BackdropCard'
+import Mirror from '@/mixins/Mirror'
 
 export default {
-  name: "Donate",
-  components: {BackdropCard},
+  name: 'Donate',
+  components: { BackdropCard },
   mixins: [Theme, Mirror],
-  data() {
+  props: {
+    hide: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
     return {
       qr: {
-        alipay: "https://qr.alipay.com/fkx03351nnunmv19b5yavdf",
-        wechatPay: "wxp://f2f0F8Z93ZkS3boz8JY3FwarwyAwcIfXC2CN",
-        paypal: "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T9LRK3VEL645J&item_name=Penguin+Statistics+Donation&currency_code=USD&source=url"
+        alipay: 'https://qr.alipay.com/fkx03351nnunmv19b5yavdf',
+        wechatPay: 'wxp://f2f0F8Z93ZkS3boz8JY3FwarwyAwcIfXC2CN',
+        paypal: 'https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=T9LRK3VEL645J&item_name=Penguin+Statistics+Donation&currency_code=USD&source=url'
       }
     }
   }
-};
+}
 </script>
 
 <style>

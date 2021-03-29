@@ -11,7 +11,7 @@
 		"intro": {
 			"intro_0": "ペンギン急便データ統計処理部門へようこそ！",
 			"intro_1": "Penguin Statisticsはペンギン急便のデータ処理部門であり(嘘)、各作戦での素材ドロップの統計分析を行っています。",
-			"intro_2": "現在ほとんどのデータはユーザーの手によって手動でアップロードされており、誤った情報や誤った情報による影響を最小限に抑えるためにペンギンデータアナライズチームはドロップアイテムについて様々な確度から審査しています。"
+			"intro_2": "現在ほとんどのデータはユーザーの手によって手動でアップロードされており、誤った情報による影響を最小限に抑えるため、アップロードされた情報について多角的に審査しています。"
 		}
 	},
 	"ko": {
@@ -32,13 +32,14 @@
 </i18n>
 
 <template>
-  <v-card 
+  <v-card
     elevation="0"
     class="transparent pt-0 my-1"
   >
     <v-row
       align="center"
-      justify="start"
+      justify="center"
+      justify-lg="start"
     >
       <v-card-title
         class="justify-start"
@@ -75,7 +76,7 @@
 </template>
 
 <script>
-import CDN from "@/mixins/CDN";
+import CDN from '@/mixins/CDN'
 
 export default {
   name: 'Intro',

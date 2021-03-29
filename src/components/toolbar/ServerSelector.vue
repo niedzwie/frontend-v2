@@ -7,20 +7,44 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        v-haptic
         rounded
         class="mx-1"
         v-bind="attrs"
+        large
+        :disabled="serverLocked"
         v-on="on"
       >
         <v-icon
           left
           small
         >
-          mdi-server
+          {{ serverLocked ? 'mdi-server-security' : 'mdi-server' }}
         </v-icon>
-        <span>
-          {{ $t("server.servers." + activeServerId) }}
-        </span>
+        <div class="d-flex flex-column align-start justify-center">
+          <span
+            class="caption"
+            style="line-height: 1rem"
+          >
+            <span class="degraded-opacity">
+              {{ $t("server.name") }}
+            </span>
+          </span>
+          <span class="heading">
+            {{ $t("server.servers." + activeServerId) }}
+          </span>
+        </div>
+        <v-scale-transition
+          origin="center center"
+        >
+          <v-icon
+            v-if="serverLocked"
+            right
+            small
+          >
+            mdi-lock
+          </v-icon>
+        </v-scale-transition>
       </v-btn>
     </template>
 
@@ -45,6 +69,7 @@
         <v-list-item
           v-for="(server, i) in servers"
           :key="i"
+          v-haptic
           :disabled="pending"
         >
           <v-list-item-title class="mr-2">
@@ -76,38 +101,39 @@
 </template>
 
 <script>
-  import config from "@/config"
-  import {mapGetters} from "vuex";
+import { mapGetters } from 'vuex'
+import supports from '@/models/supports'
 
-  export default {
-    name: "ServerSelector",
-    data() {
-      return {
-        servers: config.servers
-      }
-    },
-    computed: {
-      ...mapGetters("ajax", ["pending"]),
-      activeServer: {
-        get () {
-          return this.servers.indexOf(this.servers.find(el => el === this.$store.getters["dataSource/server"]))
-        },
-        set (localeIndex) {
-          this.changeServer(this.servers[localeIndex])
-        }
+export default {
+  name: 'ServerSelector',
+  data () {
+    return {
+      servers: supports.servers,
+    }
+  },
+  computed: {
+    ...mapGetters('ajax', ['pending']),
+    ...mapGetters('ui', ['serverLocked']),
+    activeServer: {
+      get () {
+        return this.update || this.servers.indexOf(this.servers.find(el => el === this.$store.getters['dataSource/server']))
       },
-      activeServerId () {
-        return this.servers.find(el => el === this.$store.getters["dataSource/server"])
+      set (localeIndex) {
+        this.changeServer(this.servers[localeIndex])
       }
     },
-    methods: {
-      changeServer(serverId) {
-        this.$store.commit("planner/clearExcludes")
-        this.$store.commit("dataSource/changeServer", serverId)
-        this.$store.dispatch("data/fetch", false)
-      }
-    },
+    activeServerId () {
+      return this.servers.find(el => el === this.$store.getters['dataSource/server'])
+    }
+  },
+  methods: {
+    changeServer (serverId) {
+      this.$store.commit('planner/clearExcludes')
+      this.$store.commit('dataSource/changeServer', serverId)
+      this.$store.dispatch('data/fetch', false)
+    }
   }
+}
 </script>
 
 <style scoped>

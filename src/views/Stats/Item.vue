@@ -6,24 +6,24 @@
       "title": "{item} 统计结果"
     }
   },
-	"en": {
-		"result": {
-			"name": "Statistics",
-			"title": "Statistics of {item}"
-		}
-	},
-	"ja": {
-		"result": {
-			"name": "統計結果",
-			"title": "{item} 統計結果"
-		}
-	},
-	"ko": {
-		"result": {
-			"name": "통계 결과",
-			"title": "{item}의 통계 결과"
-		}
-	}
+  "en": {
+    "result": {
+      "name": "Statistics",
+      "title": "Statistics of {item}"
+    }
+  },
+  "ja": {
+    "result": {
+      "name": "統計結果",
+      "title": "{item} 統計結果"
+    }
+  },
+  "ko": {
+    "result": {
+      "name": "통계 결과",
+      "title": "{item}의 통계 결과"
+    }
+  }
 }
 </i18n>
 
@@ -31,10 +31,10 @@
   <v-stepper
     v-model="step"
     alt-labels
-    class="transparent elevation-0 full-width pa-md-4 pa-lg-4 pa-xl-4"
+    class="transparent elevation-0 full-width pa-md-2 pa-lg-4 pa-xl-4"
   >
     <v-stepper-header
-      class="bkop-light elevation-4 py-4 pl-5 pr-8 d-flex flex-row position-relative align-center justify-center mx-2"
+      class="bkop-light elevation-4 py-2 pl-5 pr-8 d-flex flex-row position-relative align-center justify-center"
       style="border-radius: 4px"
     >
       <v-img
@@ -50,9 +50,10 @@
       </v-img>
 
       <BackButton
-        :name="$t('items.choose.name')"
+        :name="$t('item.choose.name')"
         :active="step > 1"
 
+        class="my-2"
         @back="step = 1"
       />
 
@@ -61,11 +62,13 @@
       <v-slide-x-transition>
         <div
           v-if="step === 2 && isSelectedItem && relatedItems.length"
-          class="z-index-5 d-flex flex-row"
+          class="d-flex flex-row scrollbar-hidden"
+          style="overflow-y: visible; overflow-x: scroll; z-index: 4; padding-bottom: 1px"
         >
           <span
             v-for="item in relatedItems"
             :key="item.itemId"
+            v-haptic
             class="mr-1 cursor-pointer"
             @click="storeItemSelection(item.itemId)"
           >
@@ -99,7 +102,7 @@
         class="pa-0"
         style="border-radius: 4px"
       >
-        <v-card class="bkop-light elevation-4 ma-2 mt-4 pa-4">
+        <v-card class="bkop-light elevation-4 mt-2 mt-4 pa-4">
           <ItemSelector
             @select="storeItemSelection"
           />
@@ -110,7 +113,7 @@
         :step="2"
         class="pa-0 mt-2"
       >
-        <v-card class="bkop-light pt-2 elevation-4 ma-2">
+        <v-card class="bkop-light pt-2 elevation-4 mt-2">
           <v-card-title class="pb-0">
             <v-row
               align="center"
@@ -177,20 +180,20 @@
 </template>
 
 <script>
-import get from "@/utils/getters";
-import Item from "@/components/global/Item";
-import DataSourceToggle from "@/components/stats/DataSourceToggle";
-import Console from "@/utils/Console";
-import strings from "@/utils/strings";
-import DataTable from "@/components/stats/DataTable";
-import ItemSelector from "@/components/stats/ItemSelector";
-import BackButton from "@/components/stats/BackButton";
-import CDN from "@/mixins/CDN";
-import Theme from "@/mixins/Theme";
+import get from '@/utils/getters'
+import Item from '@/components/global/Item'
+import DataSourceToggle from '@/components/stats/DataSourceToggle'
+import Console from '@/utils/Console'
+import strings from '@/utils/strings'
+import DataTable from '@/components/stats/DataTable'
+import ItemSelector from '@/components/stats/ItemSelector'
+import BackButton from '@/components/stats/BackButton'
+import CDN from '@/mixins/CDN'
+import Theme from '@/mixins/Theme'
 
 export default {
-  name: "StatsByItem",
-  components: {BackButton, ItemSelector, DataTable, Item, DataSourceToggle },
+  name: 'StatsByItem',
+  components: { BackButton, ItemSelector, DataTable, Item, DataSourceToggle },
   mixins: [CDN, Theme],
   data () {
     return {
@@ -198,7 +201,7 @@ export default {
       step: 1,
       tablePagination: {
         rowsPerPage: -1,
-        sortBy: "percentage",
+        sortBy: 'percentage',
         descending: true
       },
       headerImage: this.cdnDeliver('/backgrounds/zones/default.jpg'),
@@ -234,13 +237,16 @@ export default {
         return stageStats;
       })
       return stageStats;
+    itemStagesStats () {
+      if (!this.selectedItem) return []
+      return get.statistics.byItemId(this.selectedItem.itemId)
     },
-    selectedItemName() {
-      if (!this.selectedItem) return "";
-      return strings.translate(this.selectedItem, "name");
+    selectedItemName () {
+      if (!this.selectedItem) return ''
+      return strings.translate(this.selectedItem, 'name')
     },
-    relatedItems() {
-      if (!this.selectedItem) return [];
+    relatedItems () {
+      if (!this.selectedItem) return []
       return get.items.byGroupId(this.selectedItem.groupID)
     },
     lowestItemSanity() {
@@ -268,46 +274,49 @@ export default {
     },
   },
   watch: {
-    $route: function(to, from) {
-      Console.log("StatsByItem", "step route changed from", from.path, "to", to.path);
-      if (to.name === "StatsByItem") {
-        this.step = 1;
+    $route: function (to, from) {
+      Console.log('StatsByItem', 'step route changed from', from.path, 'to', to.path)
+      // if (to.name === from.name) return
+      if (to.name === 'StatsByItem') {
+        this.step = 1
       }
-      if (to.name === "StatsByItem_SelectedItem") {
-        this.step = 2;
+      if (to.name === 'StatsByItem_SelectedItem') {
+        this.step = 2
         this.selectedItemId = this.$route.params.itemId
       }
     },
-    step: function(newValue, oldValue) {
-      Console.log("StatsByItem", "step changed from", oldValue, "to", newValue);
+    step: function (newValue, oldValue) {
+      Console.log('StatsByItem', 'step changed from', oldValue, 'to', newValue)
       switch (newValue) {
         case 1:
-          Console.log("StatsByItem", "- [router go] index");
-          this.$router.push({ name: "StatsByItem" });
-          break;
+          Console.log('StatsByItem', '- [router go] index')
+          this.$router.push({ name: 'StatsByItem' })
+          break
         case 2:
           this.selectedItemId = this.$route.params.itemId
-          Console.log("StatsByItem", "- [router go] item", this.selectedItem.itemId);
-          this.$router.push({
-            name: "StatsByItem_SelectedItem",
-            params: { itemId: this.selectedItem.itemId }
-          });
-          break;
+          Console.log('StatsByItem', '- [router go] item', this.selectedItem.itemId)
+          if (this.$route.name !== 'StatsByItem_SelectedItem' && this.$route.params.itemId !== this.selectedItem.itemId) {
+            this.$router.push({
+              name: 'StatsByItem_SelectedItem',
+              params: { itemId: this.selectedItem.itemId }
+            })
+          }
+          break
         default:
           Console.warn(
-            "StatsByItem",
-            "unexpected step number",
+            'StatsByItem',
+            'unexpected step number',
             newValue,
-            "with [newStep, oldStep]",
+            'with [newStep, oldStep]',
             [newValue, oldValue]
-          );
+          )
       }
     }
   },
-  beforeMount() {
+  beforeMount () {
     this.$route.params.itemId &&
       (this.selectedItemId = this.$route.params.itemId) &&
-      (this.step = 2);
+      (this.step = 2)
   },
   methods: {
     // getStageItemTrendInterval(stageId) {
@@ -322,26 +331,26 @@ export default {
     //   let trend = this.getStageItemTrend(stageId);
     //   return trend && trend.results;
     // },
-    getStageItemTrend(stageId) {
-      return this.currentItemTrends && this.currentItemTrends[stageId];
+    getStageItemTrend (stageId) {
+      return this.currentItemTrends && this.currentItemTrends[stageId]
     },
-    storeItemSelection(itemId) {
+    storeItemSelection (itemId) {
       this.$router.push({
-        name: "StatsByItem_SelectedItem",
+        name: 'StatsByItem_SelectedItem',
         params: { itemId }
-      });
+      })
     },
-    redirectStage({ zone, stage }) {
+    redirectStage ({ zone, stage }) {
       this.$router.push({
-        name: "StatsByStage_SelectedBoth",
+        name: 'StatsByStage_SelectedBoth',
         params: {
           zoneId: zone.zoneId,
           stageId: stage.stageId
         }
-      });
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped>

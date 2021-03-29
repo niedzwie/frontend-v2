@@ -1,7 +1,8 @@
 <template>
   <span
-    class="ml-4 font-weight-bold off-title--wrapper"
-    :class="{'off-title--ea': isEastAsianLang, 'display-1': !small, 'headline off-title--small': small}"
+    class="font-weight-bold off-title--wrapper"
+    :class="{'off-title--ea': isEastAsianLang, 'display-1': !small, 'headline off-title--small': small, 'ml-4': !noGutters}"
+    :style="{'left': noGutters ? '0px' : null}"
   >
     <span
       v-for="(segment, i) in segments"
@@ -14,53 +15,59 @@
 </template>
 
 <script>
-  export default {
-    name: "OffTitle",
-    props: {
-      content: {
-        type: String,
-        required: true
-      },
-      small: {
-        type: Boolean,
-        default () {
-          return false
-        }
+export default {
+  name: 'OffTitle',
+  props: {
+    content: {
+      type: String,
+      required: true
+    },
+    small: {
+      type: Boolean,
+      default () {
+        return false
       }
     },
-    computed: {
-      isEastAsianLang () {
-        return ["zh", "ja", "ko"].includes(this.$i18n.locale)
-      },
-      segments() {
-        if (this.isEastAsianLang) {
-          // East asian languages (kanji)
-          return this.content.split("")
-        } else {
-          return this.content.split(" ")
-        }
+    noGutters: {
+      type: Boolean,
+      default () {
+        return false
       }
+    }
+  },
+  computed: {
+    isEastAsianLang () {
+      return ['zh', 'ja', 'ko'].includes(this.$i18n.locale)
     },
+    segments () {
+      if (this.isEastAsianLang) {
+        // East asian languages (kanji)
+        return this.content.split('')
+      } else {
+        return this.content.split(' ')
+      }
+    }
   }
+}
 </script>
 
 <style scoped>
-.off-title--wrapper {
+span.off-title--wrapper {
   position: relative;
   letter-spacing: -.1em !important;
   bottom: -20px;
-  left: 4px;
+  left: 0;
   z-index: 4;
 }
-.off-title--ea {
+span.off-title--ea {
   letter-spacing: -.18em !important;
 }
-.off-title--small {
+span.off-title--small {
   bottom: -16px;
   left: -6px;
   letter-spacing: -.08em !important;
 }
-.off-title--small.off-title--ea {
+span.off-title--ea.off-title--small {
   letter-spacing: -.1em !important;
 }
 .off-title--char {

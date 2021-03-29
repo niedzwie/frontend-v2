@@ -27,7 +27,10 @@
       popout
     >
       <v-expansion-panel>
-        <v-expansion-panel-header color="background">
+        <v-expansion-panel-header
+          v-haptic
+          color="background"
+        >
           <template v-slot:default="{ open }">
             <v-icon
               left
@@ -42,7 +45,7 @@
                 v-if="!open"
                 small
                 :color="filterCount ? 'warning' : 'secondary'"
-                class="flex-grow-0 font-weight-bold mr-2 px-4"
+                class="flex-grow-0 font-weight-bold mr-2 px-4 hidden-xxs-only"
               >
                 {{ $tc('stats.filter.indicator', filterCount) }}
               </v-chip>
@@ -76,6 +79,7 @@
                   <!--                  />-->
                   <v-checkbox
                     v-model="dataTable.showPermanent"
+                    v-haptic
                     hide-details
                     :label="$t('stats.filter.type.showPermanent')"
                     class="mt-0 pt-0"
@@ -83,6 +87,7 @@
                   />
                   <v-checkbox
                     v-model="dataTable.showActivity"
+                    v-haptic
                     hide-details
                     :label="$t('stats.filter.type.showActivity')"
                     class="pt-0"
@@ -101,6 +106,7 @@
                 <template v-slot:content>
                   <v-switch
                     v-model="dataTable.onlyOpen"
+                    v-haptic
                     hide-details
                     :label="$t('stats.filter.status.onlyOpen')"
                     class="mt-0 pt-0"
@@ -160,11 +166,11 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
-    
+
     <v-row
       align="center"
       justify="center"
-      class="mt-4 mb-1 hidden-sm-and-up"
+      class="mt-4 mb-1 hidden-lg-and-up"
     >
       <v-chip
         label
@@ -205,11 +211,10 @@
       :locale="$i18n.locale"
       :hide-default-footer="items.length <= 10"
 
-      :calculate-widths="true"
-      :mobile-breakpoint="1"
+      :mobile-breakpoint="0"
       :loading="matrixPending"
 
-      class="elevation-0 transparentTable stat-table container--fluid px-2 position-relative"
+      class="elevation-0 transparentTable stat-table container--fluid position-relative"
       :class="{'pt-0': $vuetify.breakpoint.xsOnly}"
     >
       <template v-slot:header>
@@ -222,8 +227,57 @@
           </span>
         </div>
       </template>
+
+      <template v-slot:header.stage.apCost="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.apCost') }}
+        </HeaderWithTooltip>
+      </template>
+
+      <template v-slot:header.quantity="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.quantity') }}
+        </HeaderWithTooltip>
+      </template>
+
+      <template v-slot:header.times="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.times') }}
+        </HeaderWithTooltip>
+      </template>
+
+      <template v-slot:header.percentage="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.percentage') }}
+        </HeaderWithTooltip>
+      </template>
+
+      <template v-slot:header.apPPR="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.apPPR') }}
+        </HeaderWithTooltip>
+      </template>
+
+      <template v-slot:header.stage.minClearTime="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.clearTime') }}
+        </HeaderWithTooltip>
+      </template>
+
+      <template v-slot:header.itemPerTime="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.itemPerTime') }}
+        </HeaderWithTooltip>
+      </template>
+
+      <template v-slot:header.timeRange="{header}">
+        <HeaderWithTooltip :name="header.text">
+          {{ $t('stats.headerDesc.timeRange') }}
+        </HeaderWithTooltip>
+      </template>
+
       <template v-slot:item="props">
-        <tr>
+        <tr :class="{'stat-table__outdated-row': isTimeOutdatedRange(props.item.end)}">
           <template v-if="type === 'stage'">
             <td
               :class="{
@@ -353,47 +407,29 @@
               :meta="meta(props)"
             />
           </td>
-          <td
-            v-if="invalidApCost(props.item.stage.apCost) || ['NaN', 'Infinity'].includes(props.item.apPPR)"
+          <NullableTableCell
+            :value="props.item.apPPR"
             :class="tableCellClasses"
-            class="grey--text"
-          >
-            --
-          </td>
-          <td
-            v-else
-            :class="tableCellClasses"
-          >
-            {{ props.item.apPPR }}
-          </td>
+          />
+
           <template v-if="type === 'item'">
-            <td
-              v-if="invalidApCost(props.item.stage.apCost)"
-              :class="tableCellClasses"
-              class="grey--text"
-            >
-              --
-            </td>
-            <td
-              v-else
+            <NullableTableCell
+              :value="props.item.stage.apCost"
               :class="`${tableCellClasses} ${dark ? 'orange--text text--lighten-1' : 'deep-orange--text text--darken-3 font-weight-bold'}`"
-            >
-              {{ props.item.stage.apCost }}
-            </td>
-            <td
-              v-if="props.item.stage.minClearTime"
+            />
+            <NullableTableCell
+              :value="props.item.stage.minClearTime"
+              :transformer="formatDuration"
               :class="tableCellClasses"
-            >
-              {{ formatDuration(props.item.stage.minClearTime) }}
-            </td>
-            <td
-              v-else
-              :class="tableCellClasses"
-              class="grey--text"
-            >
-              --
-            </td>
+            />
           </template>
+
+          <NullableTableCell
+            :value="props.item.itemPerTime"
+            :transformer="formatDuration"
+            :class="tableCellClasses"
+          />
+
           <td
             :class="tableCellClasses"
           >
@@ -411,22 +447,24 @@
 </template>
 
 <script>
-  import strings from "@/utils/strings";
-  import get from "@/utils/getters";
-  import Item from "@/components/global/Item";
-  import {mapGetters, mapState} from "vuex";
-  import Theme from "@/mixins/Theme";
-  import Charts from "@/components/stats/Charts";
-  import timeFormatter from "@/utils/timeFormatter";
-  import CDN from "@/mixins/CDN";
-  import Mirror from "@/mixins/Mirror";
-  import TitledRow from "@/components/global/TitledRow";
-  import existUtils from "@/utils/existUtils";
-  import validator from "@/utils/validator";
+import strings from '@/utils/strings'
+import get from '@/utils/getters'
+import Item from '@/components/global/Item'
+import { mapGetters, mapState } from 'vuex'
+import Theme from '@/mixins/Theme'
+import Charts from '@/components/stats/Charts'
+import timeFormatter from '@/utils/timeFormatter'
+import CDN from '@/mixins/CDN'
+import Mirror from '@/mixins/Mirror'
+import TitledRow from '@/components/global/TitledRow'
+import existUtils from '@/utils/existUtils'
+import validator from '@/utils/validator'
+import HeaderWithTooltip from '@/components/stats/HeaderWithTooltip'
+import NullableTableCell from '@/components/stats/NullableTableCell'
 
   export default {
     name: "DataTable",
-    components: {TitledRow, Item, Charts},
+    components: {NullableTableCell, HeaderWithTooltip, TitledRow, Item, Charts},
     mixins: [Theme, CDN, Mirror],
     props: {
       items: {
@@ -457,7 +495,7 @@
       return {
         options: {
           table: {
-            itemsPerPage: -1
+            itemsPerPage: 10
           },
           footer: {
             itemsPerPageOptions: [10, 20, 40, -1],
@@ -503,6 +541,13 @@
             width: "110px"
           },
           {
+            text: this.$t('stats.headers.itemPerTime'),
+            value: 'itemPerTime',
+            align: 'left',
+            sortable: true,
+            width: '110px'
+          },
+          {
             text: this.$t("stats.headers.timeRange"),
             value: "timeRange",
             align: "left",
@@ -511,35 +556,35 @@
           }
         ];
 
-        if (this.type === "stage") {
-          headers.unshift({
-            text: this.$t("stats.headers.item"),
-            value: "icon",
-            align: "left",
-            sortable: false,
-            width: "250px"
-          });
-        } else {
-          headers.unshift({
-              text: this.$t("stats.headers.stage"),
-              value: "stage",
-              align: "left",
-              sortable: false,
-              width: "230px"
-            })
-          headers.splice(5, 0, {
-            text: this.$t("stats.headers.apCost"),
-            value: "stage.apCost",
-            align: "left",
-            sortable: true,
-            width: "70px"
-          }, {
-            text: this.$t("stats.headers.clearTime"),
-            value: "stage.minClearTime",
-            align: "left",
-            sortable: true,
-            width: "110px"
-          });
+      if (this.type === 'stage') {
+        headers.unshift({
+          text: this.$t('stats.headers.item'),
+          value: 'icon',
+          align: 'left',
+          sortable: false,
+          width: '250px'
+        })
+      } else {
+        headers.unshift({
+          text: this.$t('stats.headers.stage'),
+          value: 'stage',
+          align: 'left',
+          sortable: false,
+          width: '230px'
+        })
+        headers.splice(5, 0, {
+          text: this.$t('stats.headers.apCost'),
+          value: 'stage.apCost',
+          align: 'left',
+          sortable: true,
+          width: '70px'
+        }, {
+          text: this.$t('stats.headers.clearTime'),
+          value: 'stage.minClearTime',
+          align: 'left',
+          sortable: true,
+          width: '110px'
+        });
           headers.splice(3, 0, {
             text: "Stage Sanity Value",
             value: "stageSanityValue",
@@ -561,117 +606,125 @@
           })
         }
 
-        return headers
+      return headers
+    },
+    strings () {
+      return strings
+    },
+    filteredData () {
+      let data = this.items
+      if (this.type === 'item') {
+        if (this.dataTable.onlyOpen) data = data.filter(el => existUtils.existence(el.stage, true))
+        if (!this.dataTable.showPermanent) data = data.filter(el => el.stage.stageType !== 'MAIN' && el.stage.stageType !== 'SUB' && el.stage.stageType !== 'DAILY')
+        if (!this.dataTable.showActivity) data = data.filter(el => el.stage.stageType !== 'ACTIVITY')
+      }
+      return data
+    },
+    filterCount () {
+      let counter = 0
+      if (this.dataTable.onlyOpen) counter++
+      if (!this.dataTable.showPermanent || !this.dataTable.showActivity) counter++
+      return counter
+    }
+  },
+  watch: {
+    dataTable: {
+      handler: function (newValue) {
+        this.$store.commit('options/changeDataTable', newValue)
       },
-      strings () {
-        return strings
-      },
-      filteredData () {
-        let data = this.items;
-        if (this.type === "item") {
-          if (this.dataTable.onlyOpen) data = data.filter(el => existUtils.existence(el.stage, true))
-          if (!this.dataTable.showPermanent) data = data.filter(el => el.stage.stageType !== "MAIN" && el.stage.stageType !== "SUB" && el.stage.stageType !== "DAILY")
-          if (!this.dataTable.showActivity) data = data.filter(el => el.stage.stageType !== "ACTIVITY")
+      deep: true
+    }
+  },
+  created () {
+    document.addEventListener('copy', this.manipulateCopy)
+  },
+  beforeDestroy () {
+    document.removeEventListener('copy', this.manipulateCopy)
+  },
+  methods: {
+    manipulateCopy (event) {
+      const extra = this.$t('meta.copyWarning', { site: document.location.href })
+      event.clipboardData.setData('text', document.getSelection() + extra)
+      event.preventDefault()
+    },
+    getTrendsData (props) {
+      if (this.type === 'stage') {
+        if (this.trends && this.trends.results && this.trends.results[props.item.item.itemId]) {
+          return {
+            results: this.trends.results[props.item.item.itemId],
+            startTime: this.trends.startTime
+          }
         }
-        return data
-      },
-      filterCount () {
-        let counter = 0;
-        if (this.dataTable.onlyOpen) counter++
-        if (!this.dataTable.showPermanent || !this.dataTable.showActivity) counter++
-        return counter
+      } else {
+        if (this.trends && validator.have(this.trends, props.item.stage.stageId)) {
+          return this.trends[props.item.stage.stageId]
+        }
+      }
+      return false
+    },
+    redirectItem (itemId) {
+      this.$router.push({
+        name: 'StatsByItem_SelectedItem',
+        params: {
+          itemId
+        }
+      })
+    },
+    redirectStage (stageId) {
+      const got = get.stages.byStageId(stageId)
+      this.$router.push({
+        name: 'StatsByStage_Selected',
+        params: {
+          zoneId: got.zoneId,
+          stageId
+        }
+      })
+    },
+    chartId (rowProps) {
+      if (this.type === 'stage') {
+        return rowProps.item.item.itemId
+      } else {
+        return rowProps.item.stage.stageId
       }
     },
-    watch: {
-      dataTable: {
-        handler: function (newValue) {
-          this.$store.commit("options/changeDataTable", newValue)
-        },
-        deep: true
+    meta (rowProps) {
+      if (this.type === 'stage') {
+        return {
+          name: strings.translate(rowProps.item.item, 'name')
+        }
+      } else {
+        return {
+          name: strings.translate(rowProps.item.stage, 'code')
+        }
       }
     },
-    created () {
-      document.addEventListener('copy', this.manipulateCopy);
-    },
-    beforeDestroy() {
-      document.removeEventListener('copy', this.manipulateCopy)
-    },
-    methods: {
-      manipulateCopy(event) {
-        const extra = this.$t('meta.copyWarning', {site: document.location.href});
-        event.clipboardData.setData('text', document.getSelection() + extra);
-        event.preventDefault();
-      },
-      getTrendsData(props) {
-        if (this.type === "stage") {
-          if (this.trends && this.trends.results && this.trends.results[props.item.item.itemId]) {
-            return {
-              results: this.trends.results[props.item.item.itemId],
-              startTime: this.trends.startTime
-            }
-          }
-        } else {
-          if (this.trends && validator.have(this.trends, props.item.stage.stageId)) {
-            return this.trends[props.item.stage.stageId]
-          }
-        }
-        return false
-      },
-      redirectItem(itemId) {
-        this.$router.push({
-          name: "StatsByItem_SelectedItem",
-          params: {
-            itemId
-          }
-        });
-      },
-      redirectStage(stageId) {
-        const got = get.stages.byStageId(stageId);
-        this.$router.push({
-          name: "StatsByStage_Selected",
-          params: {
-            zoneId: got.zoneId,
-            stageId
-          }
-        });
-      },
-      chartId (rowProps) {
-        if (this.type === "stage") {
-          return rowProps.item.item.itemId
-        } else {
-          return rowProps.item.stage.stageId
-        }
-      },
-      meta (rowProps) {
-        if (this.type === "stage") {
-          return {
-            name: strings.translate(rowProps.item.item, "name")
-          }
-        } else {
-          return {
-            name: strings.translate(rowProps.item.stage, "code")
-          }
-        }
-      },
-      formatDate (item) {
-        const start = item.start
-        const end = item.end
+    formatDate (item) {
+      const start = item.start
+      const end = item.end
 
-        return timeFormatter.startEnd(start, end)
-      },
-      formatDuration (duration) {
-        return timeFormatter.duration(duration)
-      },
-      invalidApCost (apCost) {
-        return apCost === 99 || apCost === null
-      },
-      getZoneName (stage) {
-        return strings.translate(get.zones.byZoneId(stage.zoneId, false), "zoneName")
-      }
+      return timeFormatter.startEnd(start, end)
     },
+    formatDuration (duration) {
+      return timeFormatter.duration(duration, 's', 0)
+    },
+    isTimeOutdatedRange (time) {
+      if (!time) return false
+      return time < Date.now()
+    },
+    getZoneName (stage) {
+      return strings.translate(get.zones.byZoneId(stage.zoneId, false), 'zoneName')
+    }
   }
+}
 </script>
 
 <style>
+.stat-table__outdated-row {
+  /*opacity: 0.6;*/
+  transition: opacity .225s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.stat-table__outdated-row:hover {
+  opacity: 1
+}
 
 </style>

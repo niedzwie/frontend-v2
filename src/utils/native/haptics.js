@@ -1,30 +1,54 @@
 import {
   Plugins,
-  HapticsImpactStyle
-} from '@capacitor/core';
+  HapticsImpactStyle, HapticsNotificationType, Capacitor
+} from '@capacitor/core'
+import Console from '@/utils/Console'
 
-const { Haptics } = Plugins;
+const { Haptics, PenguinPlugin } = Plugins
+
+function invoke (method, ...args) {
+  if (Capacitor.isPluginAvailable('Haptics')) {
+    Console.info('Haptics', 'invoking haptics', method, args)
+    Haptics[method](...args)
+      .catch(e => Console.warn('Haptics', 'failed to invoke haptics', e))
+  }
+}
 
 export default {
-  fire (style = HapticsImpactStyle.Heavy) {
-    Haptics.impact({
-      style: style
-    });
+  light () {
+    invoke('impact', {
+      style: HapticsImpactStyle.Heavy
+    })
   },
 
-  heavy() {
-    this.fire(HapticsImpactStyle.Heavy);
+  error () {
+    invoke('notification', {
+      style: HapticsNotificationType.ERROR
+    })
   },
 
-  medium() {
-    this.fire(HapticsImpactStyle.Medium);
+  warning () {
+    invoke('notification', {
+      style: HapticsNotificationType.WARNING
+    })
   },
 
-  light() {
-    this.fire(HapticsImpactStyle.Light);
+  success () {
+    invoke('notification', {
+      style: HapticsNotificationType.SUCCESS
+    })
   },
 
-  vibrate() {
-    Haptics.vibrate();
+  general () {
+    if (Capacitor.isPluginAvailable('PenguinPlugin')) {
+      PenguinPlugin.hapticsGeneral()
+    }
+  },
+
+  notification (type) {
+    invoke('notification', type)
+  },
+  impact (style) {
+    invoke('impact', style)
   }
 }

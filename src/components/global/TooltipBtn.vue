@@ -6,6 +6,7 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        v-haptic
         v-bind="{...$attrs, ...attrs}"
         :style="{'top': top}"
         v-on="{...$listeners, ...on}"
@@ -20,23 +21,23 @@
 </template>
 
 <script>
-  export default {
-    name: "TooltipBtn",
-    props: {
-      tip: {
-        type: String,
-        default () {
-          return ""
-        }
-      },
-      top: {
-        type: String,
-        default () {
-          return ""
-        }
-      },
+export default {
+  name: 'TooltipBtn',
+  props: {
+    tip: {
+      type: String,
+      default () {
+        return ''
+      }
     },
+    top: {
+      type: String,
+      default () {
+        return ''
+      }
+    }
   }
+}
 </script>
 
 <style scoped>

@@ -86,6 +86,7 @@
     {{ $t(snackbar.text, snackbar.extra) }}
     <v-spacer />
     <v-btn
+      v-haptic
       text
       @click="snackbar.enabled = false"
     >
@@ -95,14 +96,14 @@
 </template>
 
 <script>
-  import {mapState} from "vuex";
+import { mapState } from 'vuex'
 
-  export default {
-    name: "GlobalSnackbar",
-    computed: {
-      ...mapState("ui", ["snackbar"])
-    },
+export default {
+  name: 'GlobalSnackbar',
+  computed: {
+    ...mapState('ui', ['snackbar'])
   }
+}
 </script>
 
 <style scoped>

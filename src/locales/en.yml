@@ -6,14 +6,20 @@ app:
 server:
   name: Server
   switch: Switch Server
+  selected: Selected
   servers:
     CN: CN
     US: US
     JP: JP
     KR: KR
 menu:
+  _beta: Beta
   home: Home
-  report: Report Drops
+  search: Search
+  report:
+    _name: Report Drops
+    stage: Select By Stage
+    recognition: Recognition
   stats:
     _name: Drop Rates
     stage: By stage
@@ -45,7 +51,7 @@ menu:
     planner: ArkPlanner
 meta:
   details: Details
-  loading: Fetching application data...
+  loading: Loading...
   notfound: "???"
   footer:
     copyright:
@@ -70,12 +76,19 @@ meta:
     cancel: Cancel
     confirm: Confirm
     submit: Submit
+    save: Save
     close: Close
+  time:
+    minute: "{m}m"
+    second: "{s}s"
+  isAre: "is | are"
   copyWarning: |2-
+
 
     Data from Penguin Statistics ({site})
 stats:
   headers:
+    pattern: Pattern
     stage: Stage
     apCost: Sanity
     item: Item
@@ -85,13 +98,16 @@ stats:
     apPPR: Sanity Required Per Item
     clearTime: Shortest Clear Time
     timeRange: Time Range
+    itemPerTime: Time Per Item
   headerDesc:
     apCost: The Sanity required for the stage
     quantity: The sum of all drops in this stage
     times: The sum of the samples in this stage
-    percentage: "Calculated as $\frac{\text{quantity}}{\text{times}}$"
+    percentage: "Expected drop rate. Calculated as $$\\frac{\\text{Loots}}{\\text{Samples}}$$"
+    patternPercentage: "Possibility to get this drop pattern. Calculated as $$\\frac{\\text{Loots}}{\\text{Samples}}$$"
     apPPR: Expected Sanity required for getting 1x of this item
     clearTime: "The shortest possible time required to clear this stage, a.k.a. the time duration starting from the beginning of the combat to the appearance of the last enemy. Data source: [PRTS Wiki]({prtsLink})."
+    itemPerTime: "With the \"Percentage\" calculated, the expected amount of time required to acquire 1 item is calculated as $$\\frac{\\text{Clear Time}}{\\frac{\\text{Loots}}{\\text{Samples}}}$$"
     timeRange: "Due to the change of the drop table of this stage, the data in this row will only contain the data from the last change of the drop table, indicated as \"Time Range\""
   filter:
     title: Filter
@@ -107,7 +123,7 @@ stats:
       onlyOpen: Only show open stages
   timeRange:
     inBetween: "{0} to {1}"
-    toPresent: "{date} to Present"
+    toPresent: "{date} until now"
     endsAt: Before {date}
     unknown: Unknown
     notSelected: "(not selected)"
@@ -142,18 +158,23 @@ contribute:
   contribute_1: This is a nonprofit and open source project
   skills:
     frontend: Front End Development (Vue.js)
-    backend: Back End Development (Java Spring Boot, MongoDB)
+    backend: Back End Development (Java Spring Boot, MongoDB, Golang)
+    mobile: Mobile App Development (iOS, Android)
     maintenance: DevOps
     design: UI/UX Design
     analysis: Data Analysis
     others: "..."
 fetch:
   loading: Fetching Latest Data...
+  chunk:
+    title: Establishing connection to Level 2 neural network...
+    subtitle: Fetching page modules and rendering view, please wait...
   failed:
     title: Failed to fetch resources
     subtitle: Unable to establish synchronized connection with neural network. Missing
       partial or all resources.
     retry: Retry
+    deploying: Deploying latest version. This may last at its longest 5 minutes, please wait patiently.
     error:
       zones: Zones Data
       stages: Stages Data
@@ -162,6 +183,8 @@ fetch:
       trends: History Report Trends
       globalMatrix: Global Drop Data
       personalMatrix: Personal Drop Data
+      globalPatternMatrix: Global Drop Pattern Data
+      personalPatternMatrix: Personal Drop Pattern Data
       stats: Site Statistics
       period: Server Events
 report:
@@ -175,14 +198,115 @@ report:
     contact:
       before: 'If you are sure you got this drop in-game, submit this report and '
       activator: contact us.
-      after: Please indicate the stage name and drops. A screenshot is preferred for
-        verification purposes. Our team will mark your report appropiately after verifying
-        it.
+      after: Please indicate the stage name and drops. A screenshot is preferred for verification purposes. Our team will mark your report appropiately after verifying it.
     causes:
       noDrop: No items selected.
-      limitation: Your current submission has a large deviation from our existing
-        data. This submission could be marked as a false report, removing it from
-        our data set.
+      limitation: Your current submission has a large deviation from our existing data. This submission could be marked as a false report, removing it from our data set.
+  recognition:
+    step:
+      select: Select Images
+      recognize: Recognize
+      confirm: Confirm
+      report: Report
+    allResult:
+      stageTime: Total Stage Times
+      drops: Total Item Drops
+      sanity: Total AP consumed
+    tips:
+      fileTooBig: "File \"{name}\" with size of {size}MB is too large"
+      fileTooOld: "File \"{name}\" was created before 36hrs ago"
+      chooseImage: Click or drag to add an image
+      dragImage: Drag an image here
+      addImage: Click to add an image
+      copyImage: Right click or long press the image to share it
+      abnormal: "{count} image(s) have been \"excluded\" because they either failed to pass legibility test, or failed to be recognized"
+      notImageFile: "\"{files}\" are not image files, ignored."
+      emptyResult: No results available
+      unsatisfiedStart: Unable to Start
+      emptyFile: No images selected
+      hasInvalidFile: Contains invalid file
+    status:
+      success: Success
+      warning: Warning
+      error: Error
+    description: "Boost your upload efficiency by simply choosing your drop screenshots and let us handle the rest."
+    recognize:
+      noFilename: No Filename
+      elapsed: Elapsed
+      remaining: Remaining
+      speed: Avg Speed
+      imagePerSecond: "{count} images/sec"
+    confirm:
+      loadingImage: Loading Screenshot Preview
+      overview:
+        _name: Overview
+        total: Recognized
+        success: Passed
+        error: Failed
+        count: "{count}"
+        server: Dataset Server
+        duration: Avg Time Taken
+      details: Details
+      unknownStage: Recognition Failed
+      abnormal:
+        error: This image failed to pass the legibility test
+        fatal: This image failed to be recognized
+        hover: "Hover: see recognition results"
+      cherryPick:
+        disabled: "Unable to upload abnormal recognition result"
+        accepted: "Upload this result"
+        rejected: "Discard this result"
+      noResult: No recognition results
+      submit: "Upload Selected (×{count}) Results"
+      itemsTotal: Items
+    report:
+      title: Report Details
+      total: Total
+    states:
+      pending: Waiting for initialization...
+      initializing: Initializing...
+      recognizing: Recognizing...
+      rendering: Rendering content...
+      submitting: Submitting...
+
+    cost: Cost
+    filename: Filename
+    result: Result
+    queue: Image Queue
+    start: Recognize {count} images
+    progress: Progress
+    submit: Submit
+    retry: "Failed to submit. Retrying..."
+    filter: Filter
+    notices:
+      welcome:
+        - "Image files will be recognized **locally** using **WebAssembly** technology. We will not upload images to our server."
+        - "Please use screenshots taken within 36 hours that contains only 3-stars clear. Duplications will be detected and marked as *excluded*."
+        - "Please do not report the first-clear of a stage, and do not only report the clears where you were lucky - report all clears."
+      confirm:
+        - Click the image to enlarge it for double-checking.
+        - Screenshots which passed the legibility test have already been checked for upload.
+        - With consideration of dataset accuracy, you are **disallowed** to check a screenshot that failed the legibility test for upload.
+    exceptions:
+      "3stars::False":
+        title: "Suspected to be a non 3-stars clear"
+        subtitle: Did you wait for the animation to complete before taking the screenshot?
+      "Stage::NotFound": Cannot found any valid matching stage
+      "Fingerprint::Same":
+        title: Duplicated Images
+        subtitle: Check if you have selected duplicated images
+      "FileTimestamp::TooClose":
+        title: Screenshot Interval too close
+        subtitle: Check if you have selected duplicated images
+      "Drops::NotFound":
+        title: Unexpected Drop Item
+        subtitle: Check if you have selected a screenshot in which its content includes a closed event
+      "Drops::LowConfidence":
+        title: Low Confidence Drop Item
+        subtitle: Check if you have selected a screenshot in which its content includes a closed event
+      "Result::False":
+        title: Invalid Image
+        subtitle: Check if you have selected a valid screenshot
   rules:
     item:
       _name: Item Quantities
@@ -254,6 +378,7 @@ zone:
   types:
     MAINLINE: Main Storyline
     WEEKLY: Supplies
+    ACTIVITY: Event
     ACTIVITY_OPEN: Event (Open)
     ACTIVITY_CLOSED: Event (Closed)
     ACTIVITY_PENDING: Event (Opening Soon)
@@ -266,7 +391,32 @@ zone:
   opensAt: 'Event period: {0} - {1}'
 stage:
   name: Stage
+  about: About this Stage
   apCost: "{apCost} AP required"
+  actions:
+    _name:
+      selector: Quick Access
+      selectorEmpty: No Quick Access available
+      panel: Quick Actions
+    star:
+      name: Starred
+      activate: Star
+      activated: Starred
+      deactivate: Click to Cancel Star
+      empty:
+        - Currently you've not starred any stages
+        - You can star a stage by going to its 'Quick Access' section in its details panel.
+    history:
+      name: Recently Accessed
+      empty:
+        - No recent accessed stages available
+        - After you've visit any stage pages, a record will appear at here.
+      clear: Clear
+    links:
+      "prts-wiki": Wiki
+      "map-arknights-com": Maps
+    advanced:
+      activator: Do Advanced Query
   loots:
     NORMAL_DROP: Regular
     EXTRA_DROP: Extra
@@ -337,7 +487,8 @@ planner:
     level: Material Level
     noStage: No stage found.
     noSyntheses: No syntheses found.
-items:
+item:
+  name: Item
   choose:
     name: Choose Item
   categories:
@@ -347,6 +498,7 @@ items:
     FURN: Furniture
     MATERIAL: Materials
   related: Related Items
+  undefined: Unknown
 query:
   panel:
     builder: Query Builder
@@ -422,14 +574,10 @@ quotes:
 credits:
   material:
     title: Content Credits
-    content: Penguin Statistics utilizes (including but not limited to) pictures,
-      animations, audio, original text and other works for the purpose of better reflecting
-      the corresponding elements in the game and enhance the user experience. The
-      copyright of such works belongs to the provider of the game, Shanghai Hypergryph
-      Network Technology Co., Ltd. and/or its affiliates, including but not limited
-      to YOSTAR (HONG KONG) LIMITED, 株式会社Yostar, YOSTAR LIMITED, 龍成網路, etc,. Penguin Statistics
-      utilizes some assets from PRTS Wiki (http://prts.wiki) and has changed some of the assets
-      without modifying its original meaning.
+    content:
+      - Penguin Statistics utilizes (including but not limited to) pictures, animations, audio, original text and other works for the purpose of better reflecting the corresponding elements in the game and enhance the user experience. The copyright of such works belongs to the provider of the game, Shanghai Hypergryph Network Technology Co., Ltd. and/or its affiliates, including but not limited to YOSTAR (HONG KONG) LIMITED, 株式会社Yostar, YOSTAR LIMITED, 龍成網路, etc,.
+      - Penguin Statistics utilizes some assets from PRTS Wiki (http://prts.wiki) and has changed some of the assets without modifying its original meaning.
+      - Penguin Statistics used the slightly self-modified version of the Bender font, provided by the Free Fonts Project under a usage basis claimed on the official website of the Project ( http://jovanny.ru ) of "All fonts from the Free Fonts Project can be used both for commercial and personal purposes without any limitations.". Penguin Statistics hereby specially thanks and appreciates the Bender font for releasing their awesome font under such license.
   source:
     title: Open Source Licenses
 auth:
@@ -444,3 +592,55 @@ auth:
       deleteUserId: Delete this PenguinID record
       noData: No Data
       tips: Only able to recover PenguinID that are used in client v3.3.1 or newer versions
+members:
+  categories:
+    owner: Webmaster
+    maintainer: Maintainer
+    contributors: Contributors
+    others: Others
+    translators: Translators
+  responsibilities:
+    _name: Contributions
+    arkplanner: Author of ArkPlanner
+    backend: Backend
+    bulkupload: Bulk Upload
+    customersupport: User Support
+    v1frontend: v1.0 Frontend
+    frontend: Frontend
+    localization_en: English Localization
+    localization_ja: Japanese Localization
+    localization_ko: Korean Localization
+    logo: Logo Designer
+    maintenance: DevOps
+    materials: Materials Supplier
+    statistics: Statistics and Analysis
+    widget: Widget Development
+    native: App Development
+  socials:
+    email: Email
+    github: GitHub
+    qq: QQ
+    twitter: Twitter
+    weibo: Weibo
+pattern:
+  name: Drop Patterns
+  empty: (No Drops)
+  error:
+    # 此值实际展示为 2 行，第二行字比第一行大一些
+    - Drop Patterns for this Stage
+    - Currently not Available
+share:
+  name: Share
+  shortlink:
+    name: Short Link
+  text:
+    _tmpl: "{name} Drop Rates on Penguin Statistics"
+    stage: "Stage \"{name}\""
+    item: "Item \"{name}\""
+  success: Successfully shared
+search:
+  placeholder: Search...
+  hint: Type in Name for Stage, Zone or Item
+confirmLeave:
+  title: Are you sure to leave?
+  subtitle: Unsaved changes may lost.

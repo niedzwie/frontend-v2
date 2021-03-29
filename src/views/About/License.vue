@@ -23,10 +23,12 @@
     </p>
 
     <v-btn
+      v-haptic
       text
       outlined
       href="https://creativecommons.org/licenses/by-nc/4.0/"
       target="_blank"
+      rel="noopener"
     >
       {{ $t('meta.details') }}
       <v-icon
@@ -40,9 +42,9 @@
 </template>
 
 <script>
-  export default {
-    name: "License"
-  }
+export default {
+  name: 'License'
+}
 </script>
 
 <style scoped>
